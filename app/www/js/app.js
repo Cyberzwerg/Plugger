@@ -48,7 +48,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
     url: '/settings',
     views: {
       'tab-settings': {
-        templateUrl: 'templates/tab-account.html',
+        templateUrl: 'templates/tab-settings.html',
         controller: 'SettingsCtrl'
       }
     }
