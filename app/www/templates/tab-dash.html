@@ -1,0 +1,38 @@
+<ion-view view-title="Dashboard">
+   <ion-nav-buttons side="primary">
+      <button class="button button-clear" ng-click="sync()">
+         <i class="icon ion-load-c"></i>
+      </button>
+   </ion-nav-buttons>
+   <ion-nav-buttons side="secondary">
+      <button class="button button-clear" ng-click="toggleDelete()">
+         <i class="icon ion-ios-close-outline"></i>
+      </button>
+      <button class="button button-clear" ng-click="addDevice()">
+         <i class="icon ion-plus"></i>
+      </button>
+      <button class="button button-clear" ng-click="toggleReorder()">
+         <i class="icon ion-funnel"></i>
+      </button>
+      
+   </ion-nav-buttons>
+   <ion-content>
+      <ion-list show-reorder="shouldShowReorder" show-delete="shouldShowDelete">
+         <ion-item class="item-toggle"  ng-repeat="device in devices">
+            {{ device.title }}
+            <label class="toggle toggle-positive">
+               <input type="checkbox" ng-model="device.status" ng-change="toggle(device)" >
+               <div class="track">
+                  <div class="handle"></div>
+               </div>
+            </label>
+            <ion-reorder-button class="ion-navicon"
+               on-reorder="reorder(item, $fromIndex, $toIndex)">
+            </ion-reorder-button>
+            <ion-delete-button class="ion-minus-circled"
+                       ng-click="deleteDevice($index)">
+            </ion-delete-button>
+         </ion-item>
+      </ion-list>
+   </ion-content>
+</ion-view>

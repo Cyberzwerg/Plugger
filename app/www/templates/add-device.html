@@ -1,0 +1,38 @@
+<ion-view title="New device">	
+	<ion-content>
+		<ion-list>
+			<ion-item class="item-divider">
+				Device name
+			</ion-item>
+			<ion-item class="item-input">
+				<input type="text" ng-model="addDevice.title" placeholder="Device Name">
+			</ion-item>
+			<ion-item class="item-divider">
+				Enter home code: {{ getHomeCode() }}
+			</ion-item>
+			<ion-item>
+				<div class="row">
+					<div class="col"><ion-toggle ng-model="addDevice.homeCode[0]" >1</ion-toggle></div>	
+					<div class="col"><ion-toggle ng-model="addDevice.homeCode[1]" >2</ion-toggle></div>	
+				</div>
+				<div class="row">
+					<div class="col"><ion-toggle ng-model="addDevice.homeCode[2]" >3</ion-toggle></div>	
+					<div class="col"><ion-toggle ng-model="addDevice.homeCode[3]" >4</ion-toggle></div>	
+					
+				</div>
+				<div class="row">
+					<div class="col"><ion-toggle ng-model="addDevice.homeCode[4]">5</ion-toggle></div>	
+					<div class="col"></div>
+				</div>
+			</ion-item>
+			<ion-item class="item-divider">
+				Choose Device ID: {{  addDevice.deviceNumber }}
+			</ion-item>
+			<ion-item class="item range">
+				<input type="range" min="1" step="1" max="4" ng-model="addDevice.deviceNumber">
+			</ion-item>
+			<ion-item>
+				<button  type="button" ng-click="addDeviceConfirm()" class="button button-positive button-full"> Add</button>
+			</ion-item>
+	</ion-content>
+</ion-view>
