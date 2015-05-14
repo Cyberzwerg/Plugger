@@ -1,0 +1,22 @@
+<ion-view view-title="Dashboard">
+   <ion-nav-buttons side="secondary">
+      <button class="button button-clear" ng-click="toggleDelete()">
+         <i class="icon ion-ios-trash-outline"></i>
+      </button>
+      <button class="button button-clear" ng-click="addDevice()">
+         <i class="icon ion-ios-plus-outline"></i>
+      </button>
+      
+   </ion-nav-buttons>
+   <ion-content>
+      <ion-list show-reorder="shouldShowReorder" show-delete="shouldShowDelete">
+         <ion-item class="item-icon-right"  on-hold="quickToggle(device)" ng-click="showDevice(device)" ng-repeat="device in devices">
+            {{ device.title }}
+            <i class="icon" ng-class="{'ion-ios-lightbulb-outline': !device.status , 'ion-ios-lightbulb': device.status}"></i>
+            <ion-delete-button class="ion-minus-circled"
+                       ng-click="deleteDevice($index)">
+            </ion-delete-button>
+         </ion-item>
+      </ion-list>
+   </ion-content>
+</ion-view>

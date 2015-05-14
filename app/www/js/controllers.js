@@ -1,43 +1,56 @@
 angular.module('starter.controllers', [])
 
-
-
-.controller('DashCtrl', function($scope,localDB,api,$state) {
-
-	// Method to retrieve the devices
-	getDevices = function(){
-		$scope.devices = localDB.queryAll("devices",{ sort: [["order", "ASC"]] })	
+.service("secret",function(){
+	if(null == localStorage.getItem("secret")){		
+	  localStorage.setItem("secret",prompt("Enter firebase Secret"))
 	}
+	return function(){
+		return localStorage.getItem("secret")
+	}
+})
 
-	// Inital Call
-	getDevices()
+.service("firebaseUrl",function(){
+	if(null == localStorage.getItem("firebaseUrl")){		
+	  localStorage.setItem("firebaseUrl",prompt("Enter firebase URL"))
+	}
+	return function(){
+		return localStorage.getItem("firebaseUrl")
+	}
+})
 
-	// Make sure the devices are updated when view is shown again
-	$scope.$on("$ionicView.beforeEnter",function(){
-		getDevices()
+.service("devices",function($firebaseArray,secret,firebaseUrl){
+	var ref = new Firebase(firebaseUrl())
+	ref.authWithCustomToken(secret(), function(error, authData) {
+		if(error !== null){
+			localStorage.setItem("secret",prompt("Enter firebase Secret"))
+			window.location.reload()
+		}
 	})
+	return $firebaseArray(ref)
+})
 
-	// Toggle a device
-	$scope.toggle  = function(device){
-		api(device.homeCode,device.deviceNumber,device.status)	
+
+.controller('dashCtrl', function($scope,$state,devices) {
+	
+	devices.$loaded(function(){
+
+		$scope.devices = devices
+	})
+	
+	$scope.quickToggle = function(device){
+		device.status = !device.status
+		devices.$save(device)
 	}
-
+	
 	// Link to another state... 
 	$scope.addDevice = function(){
-		$state.go("tab.addDevice")
+		$state.go("addDevice")
 	}
 
-	// Sync function allows to write all states to the devices
-	$scope.sync = function(){
-		_.each(localDB.queryAll("devices"),function(device){
-			api(device.homeCode,device.deviceNumber, device.status)			
-		})
+	$scope.showDevice = function(device){
+		$state.go("device",{ deviceId: device.$id})
 	}
 
-	// Show reorder
-	$scope.toggleReorder = function(){
-		$scope.shouldShowReorder = !$scope.shouldShowReorder
-	}
 
 	// Show delete
 	$scope.toggleDelete = function(){
@@ -46,51 +59,51 @@ angular.module('starter.controllers', [])
 
 	// Delete device function
 	$scope.deleteDevice = function(index){
-		// Get device 
-		thisDevice = $scope.devices[index]
 
-		// Delete from database
-
-		localDB.deleteRows("devices",{ order: thisDevice.order })
-
-		// TODO: confirm dialog
-
-		// Save and update view
-		localDB.commit()
-		getDevices()
-	}
-
-	// Reoarder function
-	$scope.reorder = function(item,fromIndex,toIndex){
-
-		// Get devices which switch place
-		fromDevice = $scope.devices[fromIndex]
-		toDevice = $scope.devices[toIndex]
-
-		// Set the "order" attribute
-		localDB.update("devices",{ order: fromDevice.order },function(row){
-			row.order = toDevice.order
-			return row
-		})
-
-		localDB.update("devices",{ order: toDevice.order },function(row){
-			row.order = fromDevice.order
-			return row
-		})
-
-		// Save and update view.
-		localDB.commit()
-		getDevices()
+		$scope.devices.$remove(index)
 	}
 
 })
+/*
+	@CONTROLLER: DeviceCtrl
+*/
+.controller("deviceCtrl",function($scope,devices,$stateParams,$timeout){
+	devices.$loaded(function(){
+		_.each(devices,function(device){
+			if(device.$id == $stateParams.deviceId){
+				$scope.device = device
+			}
+		})
+	})
+	$scope.save  = function(device){
+		devices.$save(device)
+	}
+
+	$scope.timer = {
+		timeout: 1,
+		state: true,
+		multiplier: 60000
+	}
+	$scope.applyTimer = function(){
+
+		$scope.device.status = $scope.timer.state
+		$scope.device.timer = {
+			apply: true,
+			targetTime: Date.now()+$scope.timer.timeout*$scope.timer.multiplier
+		}
+		$scope.save($scope.device)
+	}
+
+})	
 
 /*
 	@CONTROLLER: addDeviceCtrl
 	@DESCRIPTION: Add a device to the local database
 */
-.controller('addDeviceCtrl', function($scope, Chats,localDB,$state) {
-  // Initial values
+.controller('addDeviceCtrl', function($scope,$state,devices) {
+
+  $scope.devices = devices
+
   $scope.addDevice = {
   	deviceNumber: 1,
   	title: "",
@@ -112,30 +125,25 @@ angular.module('starter.controllers', [])
   $scope.addDeviceConfirm = function(){
 
   	// Get new order (length of database)
-  	newOrder = localDB.rowCount("devices")
-
-  	// Insert device
-  	localDB.insert("devices",{
-
+  	$scope.devices.$add({
+  		onSunrise: "none",
+  		onSunset: "none",
   		homeCode: $scope.getHomeCode(),
 		deviceNumber: $scope.addDevice.deviceNumber,
-		order: newOrder,
 		status: false,
 		title: $scope.addDevice.title
   	})
 
-  	// Save changes
-  	localDB.commit()
-  	// Go back to the dashboard
-  	$state.go("tab.dash")
+
+  	$state.go("dash")
   }
 })
 
-.controller('SettingsCtrl', function($scope) {
+.controller('settingsCtrl', function($scope) {
   $scope.connectionInfo = {
-  	url: localStorage.getItem("url")
+  	url: localStorage.getItem("firebaseUrl")
   }
   $scope.setUrl = function(){
-  	localStorage.setItem("url",$scope.connectionInfo.url)
+  	localStorage.setItem("firebaseUrl",$scope.connectionInfo.url)
   }
 });

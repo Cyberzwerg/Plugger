@@ -25,12 +25,19 @@
 					<div class="col"></div>
 				</div>
 			</ion-item>
-			<ion-item class="item-divider">
-				Choose Device ID: {{  addDevice.deviceNumber }}
+			<ion-item class="item-input item-select">
+				<div class="input-label">
+					Choose device ID
+				</div>
+				
+				<select ng-model="addDevice.deviceNumber">
+					<option>1</option>
+					<option>2</option>
+					<option>3</option>
+					<option>4</option>
+				</select>
 			</ion-item>
-			<ion-item class="item range">
-				<input type="range" min="1" step="1" max="4" ng-model="addDevice.deviceNumber">
-			</ion-item>
+
 			<ion-item>
 				<button  type="button" ng-click="addDeviceConfirm()" class="button button-positive button-full"> Add</button>
 			</ion-item>

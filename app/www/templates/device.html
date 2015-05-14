@@ -1,0 +1,65 @@
+<ion-view >	
+	<ion-nav-title>{{ device.title }}</ion-nav-title>
+	<ion-content>
+		<ion-list>
+			<ion-item class="item-toggle">
+				Manual toggle
+				<label class="toggle toggle-positive">
+	               <input type="checkbox" ng-model="device.status" ng-change="save(device)" >
+	               <div class="track">
+	                  <div class="handle"></div>
+	               </div>
+	            </label>
+            </ion-item>
+
+            <ion-item class="item-divider">Schedule</ion-item>
+            <ion-item class="item-select">
+            	<div class="input-label">	
+            		On Sunrise
+            	</div>
+            	<select ng-model="device.onSunrise" ng-change="save(device)">
+            		<option value="on">Turn on</option>
+            		<option value="off">Turn off</option>
+            		<option value="toggle">Toggle</option>
+                        <option value="none">None</option>
+            	</select>
+
+            </ion-item>
+            <ion-item class="item-select">
+            	<div class="input-label">	
+            		On Sunset
+            	</div>
+            	<select ng-model="device.onSunset" ng-change="save(device)">
+            		<option value="on">Turn on</option>
+            		<option value="off">Turn off</option>
+            		<option value="toggle">Toggle</option>
+                        <option value="none">None</option>
+            	</select>
+            </ion-item>
+            <ion-item class="item-divider">Timer</ion-item>
+            <ion-item class="item-toggle">
+				Turn: {{ timer.state ? "On" : "Off" }}
+				<label class="toggle toggle-positive">
+	               <input type="checkbox" ng-model="timer.state">
+	               <div class="track">
+	                  <div class="handle"></div>
+	               </div>
+	            </label>
+            </ion-item>
+            <ion-item class="item range">
+            	for {{ timer.timeout }} 
+            	<select ng-model="timer.multiplier">
+            		<option value="1000">seconds</option>
+            		<option value="60000">minutes</option>
+            		<option value="3600000">hours</option>
+            	<input type="range" min="1" ng-model="timer.timeout" max="60">
+            	then {{ !timer.state ? "on" : "off" }}
+            </ion-item>
+            <ion-item>
+	            <button ng-click="applyTimer()" class="button button-block button-positive">
+				  Start timer
+				</button>
+			</ion-item>
+
+	</ion-content>
+</ion-view>

@@ -1,5 +1,5 @@
 
-angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
+angular.module('starter', ['ionic', 'starter.controllers', 'starter.services','firebase'])
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
@@ -11,49 +11,40 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
     }
   });
 })
-
+.config(function($ionicConfigProvider) {
+  if(!ionic.Platform.isIOS())$ionicConfigProvider.scrolling.jsScrolling(false);
+})
 .config(function($stateProvider, $urlRouterProvider) {
 
 
   $stateProvider
 
   // setup an abstract state for the tabs directive
-    .state('tab', {
-    url: "/tab",
-    abstract: true,
-    templateUrl: "templates/tabs.html"
-  })
   // Dashboard
-  .state('tab.dash', {
+  .state('dash', {
     url: '/dash',
-    views: {
-      'tab-dash': {
-        templateUrl: 'templates/tab-dash.html',
-        controller: 'DashCtrl'
-      }
-    }
+    templateUrl: 'templates/devices.html',
+    controller: 'dashCtrl'
   })
   // Add device
-  .state('tab.addDevice', {
+  .state('addDevice', {
     url: '/addDevice',
-    views: {
-      'tab-dash': {
-        templateUrl: 'templates/add-device.html',
-        controller: "addDeviceCtrl"
-      }
-    }
+    templateUrl: 'templates/addDevice.html',
+    controller: "addDeviceCtrl"
+  })
+  // Add device
+  .state('device', {
+    url: '/device/:deviceId',
+    templateUrl: 'templates/device.html',
+    controller: "deviceCtrl"
   })
   // Settings
-  .state('tab.settings', {
+  .state('settings', {
     url: '/settings',
-    views: {
-      'tab-settings': {
-        templateUrl: 'templates/tab-settings.html',
-        controller: 'SettingsCtrl'
-      }
-    }
+    templateUrl: 'templates/settings.html',
+    controller: 'settingsCtrl'
   });
 
-  $urlRouterProvider.otherwise('/tab/dash');
+  $urlRouterProvider.otherwise('/dash');
 
 });
